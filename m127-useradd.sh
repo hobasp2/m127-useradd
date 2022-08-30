@@ -16,10 +16,10 @@
 ## Pitfalls and Issues #####
 # Die Datumsberechnung beruecksichtigt keine Schaltjahre.
 #
-## Solved:
+## Workaround: #####
 # Passwoerter aus der csv sollten nicht mit der -y Option fuer Sonderzeichen von pwgen erstellt werden, 
-# weil die sonst als code interpretiert werden koennen, das quoting von zweiten  Echo in Zeile 36 habe ich noch nicht hingekriegt.
-#
+# weil die sonst als code interpretiert werden koennen (z.B. "!"), ein ensprechendes quoting habe ich noch nicht hingekriegt.
+# Um die Passwortsicherheit zu erhoehen wird immer am Ende ein "@" an das Passwort angehaengt.
 #############################
 
 List1="/home/holgerb/m127-useradd/Fullnames.csv"
@@ -36,7 +36,7 @@ while read -r line; do
   USERP1=$(echo "$line" | cut -f2 -d"," | cut -c1-2) # nimmt die ersten zwei Zeichen aus dem csv-Feld 2, also dem  Vornamen.
   USERP2=$(echo "$line" | cut -f1 -d",") # nimmt den kompletten Nachnamen aus Feld 1 (ein Wort ohne Umlaute etc. wurde vorher in einer Tabelle schon so vorbereitet).
   USER=$(echo "$USERP1$USERP2" | tr '[:upper:]' '[:lower:]' ) # Baut den Usernamen zusammen und sorgt fuer Kleinschreibung.
-  PASSWTMP=$(echo "$line" | cut -f3 -d","{})@ # holt das Passwort aus Feld 3.
+  PASSWTMP=$(echo "$line" | cut -f3 -d","@ # holt das Passwort aus Feld 3 und haengt das Sonderzeichen "@" an.
   BORN=$(echo "$line" | cut -f4 -d",") # holt das Geburtsdatum aus Feld 4.
 
   echo -e "useradd -m $USER -s /bin/bash; echo "$USER:$PASSWTMP" | chpasswd; chage -d 0 $USER" >> $execfileadd  # Schreibt die Commands zum Useraccounts erstellen in das Execfile. 
